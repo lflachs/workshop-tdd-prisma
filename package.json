@@ -1,0 +1,21 @@
+{
+	"name": "express-tdd-prisma",
+	"version": "1.0.0",
+	"description": "",
+	"main": "server.js",
+	"scripts": {
+		"test": "jest",
+		"test:watch": "jest --watch",
+		"start": "node server.js"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"express": "^4.17.1"
+	},
+	"devDependencies": {
+		"jest": "^26.6.3",
+		"supertest": "^6.0.1"
+	}
+}
