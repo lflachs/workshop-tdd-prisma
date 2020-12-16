@@ -6,6 +6,7 @@ model Book {
     title       String
     description String
     cover       String
+    rate        Int
 }
 
 datasource db {
