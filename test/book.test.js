@@ -1,4 +1,3 @@
-// require('dotenv.config')
 const db = require('../db');
 const { exec } = require('child_process');
 

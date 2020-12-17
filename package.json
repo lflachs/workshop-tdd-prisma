@@ -4,8 +4,8 @@
 	"description": "",
 	"main": "server.js",
 	"scripts": {
-		"test": "jest -i",
-		"test:watch": "npm test:watch",
+		"test": "jest",
+		"test:watch": "jest --watch",
 		"start": "node server.js",
 		"seed": "node seed.js",
 		"migrate:test": "dotenv -- bash -c 'DATABASE_URL=$DATABASE_URL_TEST ; npx prisma migrate deploy --preview-feature'"
