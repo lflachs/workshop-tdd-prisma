@@ -60,4 +60,56 @@ describe('Books endpoints', () => {
 			done();
 		});
 	});
+	describe('PUT endpoints', () => {
+		it('PUT /book/:id should update a book', async (done) => {
+			const newBook = await request(app)
+				.post('/api/book')
+				.send({
+					title: 'Hello',
+					description: 'This is me youre looking for',
+					cover: 'http://mycat.com',
+					rate: 5,
+				})
+				.expect(200)
+				.expect('Content-Type', /json/);
+			const updatedBook = await request(app)
+				.put(`/api/book/${newBook.body.id}`)
+				.send({
+					title: 'Hi',
+					description: 'This is not me',
+					cover: 'http://mydog.com',
+					rate: 2,
+				})
+				.expect(200)
+				.expect('Content-Type', /json/);
+			expect(updatedBook.body.title).toBe('Hi');
+			expect(updatedBook.body.description).toBe('This is not me');
+			expect(updatedBook.body.cover).toBe('http://mydog.com');
+			expect(updatedBook.body.rate).toBe(2);
+			done();
+		});
+	});
+});
+
+describe('DELETE endpoints', () => {
+	it('DELETE /book/:id should delete a book', async (done) => {
+		const newBook = await request(app)
+			.post('/api/book')
+			.send({
+				title: 'Hello',
+				description: 'This is a bad post',
+				cover: 'http://badPicturee.com',
+				rate: 0,
+			})
+			.expect(200)
+			.expect('Content-Type', /json/);
+		const deletedBook = await request(app)
+			.delete(`/api/book/${newBook.body.id}`)
+			.expect(200)
+			.expect('Content-Type', /json/);
+		const bookInDb = await db.book.findMany({ where: { id: newBook.body.id } });
+
+		expect(bookInDb.length).toBe(0);
+		done();
+	});
 });
