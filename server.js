@@ -3,8 +3,8 @@ const PORT = process.env.PORT || 3000;
 const router = require('./routes');
 const app = express();
 
+app.use(express.json());
 app.use('/api', router);
-
 app.get('*', (req, res, next) => {
 	res.status(404).json({ message: 'Page not found' });
 });
