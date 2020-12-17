@@ -17,7 +17,7 @@ describe('Books endpoints', () => {
 			.$queryRaw(`DROP DATABASE IF EXISTS ${process.env.DB_NAME_TEST}`)
 			.catch();
 
-		return exec(`npm run migrate:test`, (err) => {
+		exec(`npm run migrate:test`, (err) => {
 			if (err) {
 				throw new Error(err.message);
 			}
