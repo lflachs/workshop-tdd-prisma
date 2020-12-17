@@ -1,7 +1,6 @@
-const { book } = require('../db');
-
+const db = require('../db');
 exports.getAllBooks = (req, res, next) => {
-	book
+	db.book
 		.findMany()
 		.then((books) => res.status(200).json(books))
 		.catch((err) => {
@@ -11,7 +10,7 @@ exports.getAllBooks = (req, res, next) => {
 exports.postNewBook = (req, res, next) => {
 	console.log(req.body);
 	const { title, description, cover, rate } = req.body;
-	book
+	db.book
 		.create({ data: { title, description, cover, rate } })
 		.then((books) => res.status(200).json(books))
 		.catch((err) => {

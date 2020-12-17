@@ -9,6 +9,12 @@ model Book {
     rate        Int
 }
 
+model User {
+    id    Int    @id @default(autoincrement())
+    email String
+    test  String
+}
+
 datasource db {
     provider = "mysql"
     url      = env("DATABASE_URL")
