@@ -14,14 +14,14 @@ const createBookRecord = () => ({
 describe('Books endpoints', () => {
 	beforeEach(async (done) => {
 		await db
-			.$queryRaw(`DROP DATABASE IF EXISTS ${process.env.DB_NAME_TEST}`)
-			.catch();
+			.$queryRaw(`DROP DATABASE IF EXISTS \`${process.env.DB_NAME_TEST}\``)
+			.catch((err) => console.log(err));
 
 		exec(`npm run migrate:test`, (err) => {
 			if (err) {
 				throw new Error(err.message);
 			}
-			return done();
+			done();
 		});
 	});
 	afterAll((done) => {
@@ -30,19 +30,19 @@ describe('Books endpoints', () => {
 	});
 
 	describe('GET endpoints', () => {
-		it('GET /books should return some books', async (done) => {
+		it('GET /books should return some books', async () => {
 			let { id } = await db.book.create({ data: createBookRecord() });
+			await db.$disconnect();
 			let response = await request(app)
 				.get('/api/book')
 				.expect(200)
 				.expect('Content-Type', /json/);
 			expect(response.body.length).toBe(1);
 			expect(response.body[0].id).toBe(id);
-			done();
 		});
 	});
 	describe('POST endpoints', () => {
-		it('POST /book should create a book', async (done) => {
+		it('POST /book should create a book', async () => {
 			const response = await request(app)
 				.post('/api/book')
 				.send({
@@ -57,11 +57,10 @@ describe('Books endpoints', () => {
 			expect(response.body.description).toBe('This is me youre looking for');
 			expect(response.body.cover).toBe('http://mycat.com');
 			expect(response.body.rate).toBe(5);
-			done();
 		});
 	});
 	describe('PUT endpoints', () => {
-		it('PUT /book/:id should update a book', async (done) => {
+		it('PUT /book/:id should update a book', async () => {
 			const newBook = await request(app)
 				.post('/api/book')
 				.send({
@@ -86,13 +85,12 @@ describe('Books endpoints', () => {
 			expect(updatedBook.body.description).toBe('This is not me');
 			expect(updatedBook.body.cover).toBe('http://mydog.com');
 			expect(updatedBook.body.rate).toBe(2);
-			done();
 		});
 	});
 });
 
 describe('DELETE endpoints', () => {
-	it('DELETE /book/:id should delete a book', async (done) => {
+	it('DELETE /book/:id should delete a book', async () => {
 		const newBook = await request(app)
 			.post('/api/book')
 			.send({
@@ -108,8 +106,7 @@ describe('DELETE endpoints', () => {
 			.expect(200)
 			.expect('Content-Type', /json/);
 		const bookInDb = await db.book.findMany({ where: { id: newBook.body.id } });
-
+		await db.$disconnect();
 		expect(bookInDb.length).toBe(0);
-		done();
 	});
 });
