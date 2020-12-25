@@ -12,7 +12,13 @@ const createBookRecord = () => ({
 	rate: faker.random.number(0, 5),
 });
 describe('Books endpoints', () => {
+	beforeAll(async (done) => {
+		await db.$disconnect();
+		done();
+	});
 	beforeEach(async (done) => {
+		await db.$disconnect();
+
 		await db
 			.$queryRaw(`DROP DATABASE IF EXISTS \`${process.env.DB_NAME_TEST}\``)
 			.catch((err) => console.log(err));
@@ -24,8 +30,8 @@ describe('Books endpoints', () => {
 			done();
 		});
 	});
-	afterAll((done) => {
-		db.$disconnect();
+	afterEach(async (done) => {
+		await db.$disconnect();
 		done();
 	});
 
@@ -91,21 +97,22 @@ describe('Books endpoints', () => {
 
 describe('DELETE endpoints', () => {
 	it('DELETE /book/:id should delete a book', async () => {
-		const newBook = await request(app)
-			.post('/api/book')
-			.send({
+		const newBook = await db.book.create({
+			data: {
 				title: 'Hello',
 				description: 'This is a bad post',
 				cover: 'http://badPicturee.com',
 				rate: 0,
-			})
-			.expect(200)
-			.expect('Content-Type', /json/);
+			},
+		});
+
 		const deletedBook = await request(app)
-			.delete(`/api/book/${newBook.body.id}`)
+			.delete(`/api/book/${newBook.id}`)
 			.expect(200)
 			.expect('Content-Type', /json/);
-		const bookInDb = await db.book.findMany({ where: { id: newBook.body.id } });
+
+		const bookInDb = await db.book.findMany({ where: { id: newBook.id } });
+
 		await db.$disconnect();
 		expect(bookInDb.length).toBe(0);
 	});
